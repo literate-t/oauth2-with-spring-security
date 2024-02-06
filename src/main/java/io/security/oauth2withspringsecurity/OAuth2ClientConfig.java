@@ -11,9 +11,11 @@ public class OAuth2ClientConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated().and()
+        http.authorizeRequests().antMatchers("/home", "/client").permitAll().anyRequest()
+            .authenticated().and()
 //            .oauth2Login(Customizer.withDefaults())   // 인가, 인증처리 다 해준다
             .oauth2Client(Customizer.withDefaults()); // 인가까지만 처리해주고 인증처리까지 해주지 않는다
+        http.logout().logoutSuccessUrl("/home");
 
         return http.build();
     }

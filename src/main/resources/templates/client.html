@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<h1>Welcome</h1>
+<div sec:authorize="isAuthenticated()">
+  <a href="@{/logout}">Logout</a>
+</div>
+<div sec:authorize="isAuthenticated()">principalName: <span
+    th:text="${principalName}">인가받은 클라이언트</span>
+</div>
+<div sec:authorize="isAuthenticated()">clientName: <span
+    th:text="${clientName}">인가받은 클라이언트</span></div>
+<div sec:authorize="isAuthenticated()">accessToken: <span
+    th:text="${accessToken}">인가받은 클라이언트</span></div>
+<div sec:authorize="isAuthenticated()">refreshToken: <span
+    th:text="${refreshToken}">인가받은 클라이언트</span></div>
+</body>
+</html>
