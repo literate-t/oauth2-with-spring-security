@@ -17,7 +17,7 @@ public class OAuth2ClientConfig {
                 authorizationEndpointConfig -> authorizationEndpointConfig.baseUri(
                     "/oauth2/v1/authorization")) // "/oauth2/authorization" -> default
             .redirectionEndpoint(redirectionEndpointConfig -> redirectionEndpointConfig.baseUri(
-                // yml 파일에도 반영되어야 하고 인거서버에도 반영되어야 함
+                // yml 파일에도 반영되어야 하고 인가서버에도 반영되어야 함
                 "/login/v1/oauth2/code/*")) // "/login/oauth2/code/*" -> default
         );
 
