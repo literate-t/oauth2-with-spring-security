@@ -1,38 +1,46 @@
 package io.security.oauth2withspringsecurity;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 public class OAuth2ClientConfig {
 
-    private final ClientRegistrationRepository clientRegistrationRepository;
-
-    public OAuth2ClientConfig(ClientRegistrationRepository clientRegistrationRepository) {
-        this.clientRegistrationRepository = clientRegistrationRepository;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests(
-            (requests) -> requests.antMatchers("/home").permitAll().anyRequest().authenticated());
-        http.oauth2Login(
-            httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer.authorizationEndpoint(
-                authorizationEndpointConfig -> authorizationEndpointConfig.authorizationRequestResolver(
-                    customResolver())));
-        http.logout().logoutSuccessUrl("/home");
+        http.authorizeRequests().anyRequest().authenticated().and()
+//            .oauth2Login(Customizer.withDefaults())   // 인가, 인증처리 다 해준다
+            .oauth2Client(Customizer.withDefaults()); // 인가까지만 처리해주고 인증처리까지 해주지 않는다
 
         return http.build();
     }
 
-    private OAuth2AuthorizationRequestResolver customResolver() {
-        return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
-            "/oauth2/authorization");
-    }
+//    private final ClientRegistrationRepository clientRegistrationRepository;
+//
+//    public OAuth2ClientConfig(ClientRegistrationRepository clientRegistrationRepository) {
+//        this.clientRegistrationRepository = clientRegistrationRepository;
+//    }
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.authorizeRequests(
+//            (requests) -> requests.antMatchers("/home").permitAll().anyRequest().authenticated());
+//        http.oauth2Login(
+//            httpSecurityOAuth2LoginConfigurer -> httpSecurityOAuth2LoginConfigurer.authorizationEndpoint(
+//                authorizationEndpointConfig -> authorizationEndpointConfig.authorizationRequestResolver(
+//                    customResolver())));
+//        http.logout().logoutSuccessUrl("/home");
+//
+//        return http.build();
+//    }
+
+//    private OAuth2AuthorizationRequestResolver customResolver() {
+//        return new CustomOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
+//            "/oauth2/authorization");
+//    }
 
 //    @Bean
 //    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
