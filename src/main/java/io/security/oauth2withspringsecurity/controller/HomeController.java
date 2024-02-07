@@ -1,4 +1,4 @@
-package io.security.oauth2withspringsecurity;
+package io.security.oauth2withspringsecurity.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +8,6 @@ public class HomeController {
 
   @GetMapping("/home")
   public String home() {
-    return "home2";
+    return "homeGrantType2";
   }
 }

@@ -1,31 +1,16 @@
-<!DOCTYPE html >
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
 <body>
 <h2>Welcome</h2>
-<div sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></div>
-<form sec:authorize="isAnonymous()" action="#">
-  <input type="button" onclick="authorizationCode()" value="AuthorizationCode Grant">
-  <input type="button" onclick="authorizationCodeWithPKCE()"
-         value="AuthorizationCode Grant with PKCE">
-  <input type="button" onclick="implicit()" value="Implicit Grant">
-</form>
-<script>
-  const authorizationCode = () => {
-    window.location = new URL("http://localhost:8081/oauth2/authorization/keycloak1");
-  }
-
-  const authorizationCodeWithPKCE = () => {
-    window.location = new URL("http://localhost:8081/oauth2/authorization/keycloakWithPKCE");
-  }
-
-  const implicit = () => {
-    window.location = new URL("http://localhost:8081/oauth2/authorization/keycloak2");
-  }
-</script>
+<div>
+  <span th:text="${oAuthenticationToken}"></span>
+</div>
+<div>
+  <a href="/logout">logout</a>
+</div>
 </body>
 </html>

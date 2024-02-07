@@ -1,4 +1,4 @@
-package io.security.oauth2withspringsecurity;
+package io.security.oauth2withspringsecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
@@ -11,11 +11,11 @@ public class OAuth2ClientConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/home", "/client").permitAll().anyRequest()
+        http.authorizeRequests().antMatchers("/", "/client", "/oauth2Login").permitAll()
+            .anyRequest()
             .authenticated().and()
 //            .oauth2Login(Customizer.withDefaults())   // 인가, 인증처리 다 해준다
             .oauth2Client(Customizer.withDefaults()); // 인가까지만 처리해주고 인증처리까지 해주지 않는다
-        http.logout().logoutSuccessUrl("/home");
 
         return http.build();
     }

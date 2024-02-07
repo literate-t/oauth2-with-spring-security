@@ -1,4 +1,4 @@
-package io.security.oauth2withspringsecurity;
+package io.security.oauth2withspringsecurity.controller;
 
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
