@@ -48,9 +48,7 @@ public class OAuth2ClientConfig {
             defaultOAuth2AuthorizedClientManager, clientRepository);
 
         authenticationFilter.setAuthenticationSuccessHandler(
-            (request, response, authentication) -> {
-                response.sendRedirect("/home");
-            });
+            (request, response, authentication) -> response.sendRedirect("/home"));
 
         return authenticationFilter;
     }
