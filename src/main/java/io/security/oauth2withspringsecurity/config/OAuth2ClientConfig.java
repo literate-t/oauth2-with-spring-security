@@ -1,13 +1,28 @@
 package io.security.oauth2withspringsecurity.config;
 
+import io.security.oauth2withspringsecurity.filter.CustomOAuth2AuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class OAuth2ClientConfig {
+
+    private final DefaultOAuth2AuthorizedClientManager defaultOAuth2AuthorizedClientManager;
+    private final OAuth2AuthorizedClientRepository clientRepository;
+
+    public OAuth2ClientConfig(
+        DefaultOAuth2AuthorizedClientManager defaultOAuth2AuthorizedClientManager,
+        OAuth2AuthorizedClientRepository clientRepository) {
+
+        this.defaultOAuth2AuthorizedClientManager = defaultOAuth2AuthorizedClientManager;
+        this.clientRepository = clientRepository;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -18,7 +33,23 @@ public class OAuth2ClientConfig {
 //            .oauth2Login(Customizer.withDefaults())   // 인가, 인증처리 다 해준다
             .oauth2Client(Customizer.withDefaults()); // 인가까지만 처리해주고 인증처리까지 해주지 않는다
 
+        // 필터 등록을 하면 LoginController는 호출되지 않음
+        http.addFilterBefore(customOAuth2AuthenticationFilter(),
+            UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
+    }
+
+    private CustomOAuth2AuthenticationFilter customOAuth2AuthenticationFilter() {
+        CustomOAuth2AuthenticationFilter authenticationFilter = new CustomOAuth2AuthenticationFilter(
+            defaultOAuth2AuthorizedClientManager, clientRepository);
+
+        authenticationFilter.setAuthenticationSuccessHandler(
+            (request, response, authentication) -> {
+                response.sendRedirect("/home");
+            });
+
+        return authenticationFilter;
     }
 
 //    private final ClientRegistrationRepository clientRegistrationRepository;
