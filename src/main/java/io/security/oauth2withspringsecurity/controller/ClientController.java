@@ -1,6 +1,6 @@
 package io.security.oauth2withspringsecurity.controller;
 
-import java.util.Arrays;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -48,7 +48,7 @@ public class ClientController {
         new OAuth2UserRequest(authorizedClient1.getClientRegistration(), accessToken));
 
     OAuth2AuthenticationToken auth2AuthenticationToken = new OAuth2AuthenticationToken(oAuth2User,
-        Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")),
+        List.of(new SimpleGrantedAuthority("ROLE_USER")),
         authorizedClient1.getClientRegistration().getRegistrationId());
 
     SecurityContextHolder.getContext().setAuthentication(auth2AuthenticationToken);
