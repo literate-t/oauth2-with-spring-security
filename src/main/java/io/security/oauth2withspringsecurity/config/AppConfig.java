@@ -1,5 +1,6 @@
 package io.security.oauth2withspringsecurity.config;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,9 +30,13 @@ public class AppConfig {
     OAuth2AuthorizedClientProvider auth2AuthorizedClientProvider =
         OAuth2AuthorizedClientProviderBuilder.builder()
             .authorizationCode()
-            .password()
+            .password(
+                // token값을 바로 만료시키기 위한 것
+                passwordGrantBuilder -> passwordGrantBuilder.clockSkew(Duration.ofSeconds(3600)))
             .clientCredentials()
-            .refreshToken()
+            // token값을 바로 만료시키기 위한 것.
+            .refreshToken(refreshTokenGrantBuilder -> refreshTokenGrantBuilder.clockSkew(
+                Duration.ofSeconds(3600)))
             .build();
 
     DefaultOAuth2AuthorizedClientManager oAuth2AuthorizedClientManager

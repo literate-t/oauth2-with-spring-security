@@ -7,10 +7,15 @@
 <body>
 <h2>Welcome</h2>
 <div>
-  <span th:text="${oAuth2AuthenticationToken}"></span>
-  <div>
-    Access Token: <span th:text="${authorizedClient}"></span>
-  </div>
+  <p>
+    Authorized Client: <span th:text="${oAuth2AuthenticationToken}"></span>
+  </p>
+  <p>
+    Access Token: <span th:text="${accessToken}"></span>
+  </p>
+  <p>
+    Refresh Token: <span th:text="${refreshToken}"></span>
+  </p>
 </div>
 <div>
   <a href="/logout">logout</a>
