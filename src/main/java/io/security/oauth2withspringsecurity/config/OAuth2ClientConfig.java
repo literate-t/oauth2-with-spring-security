@@ -36,6 +36,9 @@ public class OAuth2ClientConfig {
         // 필터 등록을 하면 LoginController는 호출되지 않음
         http.addFilterBefore(customOAuth2AuthenticationFilter(),
             UsernamePasswordAuthenticationFilter.class);
+//        다음과 같이 처리하면 커스텀 필터에서 authenticaion 객체의 null 처리를 하지 않아도 된다
+//        http.addFilterAfter(customOAuth2AuthenticationFilter(),
+//            AnonymousAuthenticationFilter.class);
 
         return http.build();
     }
