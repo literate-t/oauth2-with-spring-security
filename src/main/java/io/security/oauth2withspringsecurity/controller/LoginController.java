@@ -36,8 +36,8 @@ public class LoginController {
         this.oAuth2AuthorizedClientRepository = oAuth2AuthorizedClientRepository;
     }
 
-    @GetMapping("/oauth2Login")
-    public String oauth2Login(Model model, HttpServletRequest request,
+    @GetMapping("/oauth2LoginWithPassword")
+    public String oauth2LoginWithPassword(Model model, HttpServletRequest request,
         HttpServletResponse response) {
 
         // Anonymous
@@ -82,6 +82,36 @@ public class LoginController {
         return "redirect:/";
     }
 
+    @GetMapping("/oauth2LoginClientCredentials")
+    public String oauth2LoginClientCredentials(Model model, HttpServletRequest request,
+        HttpServletResponse response) {
+        // Anonymous
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(
+                "keycloak").principal(authentication)
+            .attribute(HttpServletRequest.class.getName(), request)
+            .attribute(HttpServletResponse.class.getName(), response).build();
+
+        OAuth2AuthorizedClient auth2AuthorizedClient = oAuth2AuthorizedClientManager.authorize(
+            authorizeRequest);
+
+        // 별도의 인증처리 단계가 필요 없다(user == client)
+        // 인가로 절차 종료임
+
+        try {
+            model.addAttribute("authorizedClient",
+                auth2AuthorizedClient.getAccessToken().getTokenValue());
+        } catch (Exception e) {
+            model.addAttribute("authorizedClient", "No data.");
+        }
+
+        return "home";
+    }
+
+    /*
+     * Client Credentials 에서는 인증 과정이 따로 없고 anonymous 객체임
+     * */
     @GetMapping("/logout")
     public String logout(Authentication authentication, HttpServletRequest request,
         HttpServletResponse response) {

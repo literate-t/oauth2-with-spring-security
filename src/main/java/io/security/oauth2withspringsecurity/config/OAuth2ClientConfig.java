@@ -11,7 +11,8 @@ public class OAuth2ClientConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/", "/client", "/oauth2Login").permitAll()
+        http.authorizeRequests().antMatchers("/", "/client", "/oauth2LoginWithPassword", "/logout",
+                "/oauth2LoginClientCredentials").permitAll()
             .anyRequest()
             .authenticated().and()
 //            .oauth2Login(Customizer.withDefaults())   // 인가, 인증처리 다 해준다

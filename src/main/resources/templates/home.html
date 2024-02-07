@@ -8,6 +8,9 @@
 <h2>Welcome</h2>
 <div>
   <span th:text="${oAuth2AuthenticationToken}"></span>
+  <div>
+    Access Token: <span th:text="${authorizedClient}"></span>
+  </div>
 </div>
 <div>
   <a href="/logout">logout</a>
