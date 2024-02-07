@@ -13,6 +13,8 @@
   <div sec:authorize="isAnonymous()">
     <p><a th:href="@{/oauth2LoginWithPassword(username='user', password='test')}">Password Flow
       Login</a></p>
+    <p><a th:href="@{/v2/oauth2LoginWithPassword(username='user', password='test')}">Password Flow
+      Login V2</a></p>
     <p><a th:href="@{/oauth2LoginClientCredentials}">Client Credentials Flow Login</a></p>
   </div>
 </form>

@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -104,6 +105,46 @@ public class LoginController {
             // 사용자 정보 획득
             OAuth2User oAuth2User = oAuth2UserService.loadUser(oAuth2UserRequest);
 
+
+            // 인증 처리
+            SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
+            authorityMapper.setPrefix("SYSTEM_");
+            Set<GrantedAuthority> grantedAuthorities = authorityMapper.mapAuthorities(
+                oAuth2User.getAuthorities());
+
+            OAuth2AuthenticationToken oAuth2AuthenticationToken = new OAuth2AuthenticationToken(
+                oAuth2User, grantedAuthorities /*oAuth2User.getAuthorities()*/,
+                clientRegistration.getRegistrationId());
+
+            // 인증된 사용자의 상태값 유지
+            SecurityContextHolder.getContext().setAuthentication(oAuth2AuthenticationToken);
+
+            model.addAttribute("oAuth2AuthenticationToken", oAuth2AuthenticationToken);
+            model.addAttribute("accessToken",
+                auth2AuthorizedClient.getAccessToken().getTokenValue());
+            model.addAttribute("refreshToken",
+                auth2AuthorizedClient.getRefreshToken().getTokenValue());
+
+            return "home";
+        }
+
+        return "redirect:/";
+    }
+
+    @GetMapping("/v2/oauth2LoginWithPassword")
+    public String oauth2LoginWithPasswordV2(Model model,
+        // 편하긴 한데 과정을 알고 있어야지
+        @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient auth2AuthorizedClient) {
+
+        if (null != auth2AuthorizedClient) {
+            ClientRegistration clientRegistration = auth2AuthorizedClient.getClientRegistration();
+            OAuth2AccessToken accessToken = auth2AuthorizedClient.getAccessToken();
+
+            OAuth2UserRequest oAuth2UserRequest = new OAuth2UserRequest(clientRegistration,
+                accessToken);
+            OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
+            // 사용자 정보 획득
+            OAuth2User oAuth2User = oAuth2UserService.loadUser(oAuth2UserRequest);
 
             // 인증 처리
             SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
