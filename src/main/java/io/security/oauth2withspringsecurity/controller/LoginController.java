@@ -18,7 +18,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -62,39 +61,39 @@ public class LoginController {
 
         if (null != auth2AuthorizedClient) {
             // 권한 부여 방식을 변경하지 않고 실행(refresh token
-            // 액세스 토큰 만료 && 리프레시 토큰 존재면 RefreshTokenOAuth2AuthorizedClientProvider으로 가게 함
+            // 액세스 토큰 만료 && 리프레시 토큰 존재면 RefreshTokenOAuth2AuthorizedClientProvider으로 이동하게 만드는 코드
             // 아래 방식보다 코드가 간단함
-//            if (hasTokenExpired(auth2AuthorizedClient.getAccessToken())
-//                && null != auth2AuthorizedClient.getRefreshToken()) {
-//                oAuth2AuthorizedClientManager.authorize(authorizeRequest);
-//            }
+            if (hasTokenExpired(auth2AuthorizedClient.getAccessToken())
+                && null != auth2AuthorizedClient.getRefreshToken()) {
+                oAuth2AuthorizedClientManager.authorize(authorizeRequest);
+            }
 
             // 권한 부여 방식을 변경하고 실행(refresh token)
             // DelegatingOAuth2AuthorizedClientProvider.authorize에서
             // 바로 RefreshTokenOAuth2AuthorizedClientProvider을 실행
             // 수동으로 디테일한 설정
-            if (hasTokenExpired(auth2AuthorizedClient.getAccessToken())
-                && null != auth2AuthorizedClient.getRefreshToken()) {
-                ClientRegistration clientRegistration = ClientRegistration
-                    .withClientRegistration(auth2AuthorizedClient.getClientRegistration())
-                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                    .build();
-
-                OAuth2AuthorizedClient oAuth2AuthorizedClient = new OAuth2AuthorizedClient(
-                    clientRegistration,
-                    auth2AuthorizedClient.getPrincipalName(),
-                    auth2AuthorizedClient.getAccessToken(),
-                    auth2AuthorizedClient.getRefreshToken());
-
-                OAuth2AuthorizeRequest oAuth2AuthorizeRequest = OAuth2AuthorizeRequest
-                    .withAuthorizedClient(oAuth2AuthorizedClient)
-                    .principal(authentication)
-                    .attribute(HttpServletRequest.class.getName(), request)
-                    .attribute(HttpServletResponse.class.getName(), response)
-                    .build();
-
-                oAuth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
-            }
+//            if (hasTokenExpired(auth2AuthorizedClient.getAccessToken())
+//                && null != auth2AuthorizedClient.getRefreshToken()) {
+//                ClientRegistration clientRegistration = ClientRegistration
+//                    .withClientRegistration(auth2AuthorizedClient.getClientRegistration())
+//                    .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                    .build();
+//
+//                OAuth2AuthorizedClient oAuth2AuthorizedClient = new OAuth2AuthorizedClient(
+//                    clientRegistration,
+//                    auth2AuthorizedClient.getPrincipalName(),
+//                    auth2AuthorizedClient.getAccessToken(),
+//                    auth2AuthorizedClient.getRefreshToken());
+//
+//                OAuth2AuthorizeRequest oAuth2AuthorizeRequest = OAuth2AuthorizeRequest
+//                    .withAuthorizedClient(oAuth2AuthorizedClient)
+//                    .principal(authentication)
+//                    .attribute(HttpServletRequest.class.getName(), request)
+//                    .attribute(HttpServletResponse.class.getName(), response)
+//                    .build();
+//
+//                oAuth2AuthorizedClientManager.authorize(oAuth2AuthorizeRequest);
+//            }
 
             ClientRegistration clientRegistration = auth2AuthorizedClient.getClientRegistration();
             OAuth2AccessToken accessToken = auth2AuthorizedClient.getAccessToken();
@@ -134,7 +133,8 @@ public class LoginController {
     @GetMapping("/oauth2LoginClientCredentials")
     public String oauth2LoginClientCredentials(Model model, HttpServletRequest request,
         HttpServletResponse response) {
-        // Anonymous
+        // AnonymousAuthenticationToken(can't be null)
+        // 모든 필터를 돌고 들어오기 때문이다
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest.withClientRegistrationId(
