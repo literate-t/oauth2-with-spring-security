@@ -10,6 +10,9 @@
 <div sec:authorize="isAuthenticated()"><a th:href="@{/logout}">Logout</a></div>
 <form sec:authorize="isAnonymous()" action="#">
   <input type="button" onclick="authorizationCode()" value="AuthorizationCode Grant">
+  <div sec:authorize="isAnonymous()">
+    <a th:href="@{/oauth2Login(username='user', password='test')}">Password Flow Login</a>
+  </div>
 </form>
 <script>
   const authorizationCode = () => {
